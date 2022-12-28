@@ -1,5 +1,6 @@
 package com.blogappapis.controller;
 
+import com.blogappapis.mapper.ApiResponse;
 import com.blogappapis.mapper.UserMapper;
 import com.blogappapis.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer userId){
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId){
         this.userService.deleteUser(userId);
-        return  new ResponseEntity<>(userId + " user id deleted successfully ", HttpStatus.OK);
+        return  new ResponseEntity(new ApiResponse("user deleted successfully", true), HttpStatus.OK);
     }
 
     @GetMapping("/")
