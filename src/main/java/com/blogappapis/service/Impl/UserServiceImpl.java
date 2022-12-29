@@ -5,6 +5,7 @@ import com.blogappapis.exception.ResourceNotFoundException;
 import com.blogappapis.mapper.UserMapper;
 import com.blogappapis.repositories.UserRepository;
 import com.blogappapis.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public UserMapper createUser(UserMapper userMapper) {
@@ -58,23 +62,13 @@ public class UserServiceImpl implements UserService {
         this.userRepository.deleteById(userId);
     }
 
-    private User mapperToUser(UserMapper user){
-        User tempUser=new User();
-        tempUser.setId(user.getId());
-        tempUser.setName(user.getName());
-        tempUser.setEmail(user.getEmail());
-        tempUser.setPassword(user.getPassword());
-        tempUser.setAbout(user.getAbout());
+    private User mapperToUser(UserMapper userMapper){
+        User tempUser= this.modelMapper.map(userMapper, User.class );
         return tempUser;
     }
 
     private UserMapper userToMapper(User user){
-        UserMapper userMapper = new UserMapper();
-        userMapper.setId(userMapper.getId());
-        userMapper.setName(user.getName());
-        userMapper.setEmail(user.getEmail());
-        userMapper.setPassword(userMapper.getPassword());
-        userMapper.setAbout(user.getAbout());
+        UserMapper userMapper = this.modelMapper.map(user, UserMapper.class);
         return userMapper;
     }
 }
