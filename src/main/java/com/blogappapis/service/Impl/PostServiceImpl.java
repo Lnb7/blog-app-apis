@@ -5,12 +5,16 @@ import com.blogappapis.entity.Post;
 import com.blogappapis.entity.User;
 import com.blogappapis.exception.ResourceNotFoundException;
 import com.blogappapis.mapper.PostMapper;
+import com.blogappapis.mapper.PostResponse;
 import com.blogappapis.repositories.CategoryRepository;
 import com.blogappapis.repositories.PostRepository;
 import com.blogappapis.repositories.UserRepository;
 import com.blogappapis.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -73,16 +77,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostMapper> getAllPost() {
-        List<Post> posts = this.postRepository.findAll();
+    public PostResponse getAllPost(Integer pageNumber, Integer pageSize) {
+        Pageable pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Post> pagePosts = this.postRepository.findAll(pageRequest);
+        List<Post> posts = pagePosts.getContent();
         List<PostMapper> postMapperList = posts.stream().map(post -> this.modelMapper.map(post, PostMapper.class))
                 .collect(Collectors.toList());
-        return postMapperList;
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(postMapperList);
+        postResponse.setPageNumber(pagePosts.getNumber());
+        postResponse.setPageSize(pagePosts.getSize());
+        postResponse.setTotalElement(pagePosts.getTotalElements());
+        postResponse.setTotalPage(pagePosts.getTotalPages());
+        postResponse.setLastPage(postResponse.isLastPage());
+
+        return postResponse;
     }
 
     @Override
     public PostMapper getPostById(Integer postId) {
-        Post post = this.postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "PostId", postId));
+        Post post = this.postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "PostId", postId));
         PostMapper postMapper = this.modelMapper.map(post, PostMapper.class);
         return postMapper;
     }
@@ -107,7 +123,8 @@ public class PostServiceImpl implements PostService {
 
         List<Post> posts = this.postRepository.findByUser(user);
 
-        List<PostMapper> postMappers = posts.stream().map(post -> this.modelMapper.map(post, PostMapper.class)).collect(Collectors.toList());
+        List<PostMapper> postMappers = posts.stream()
+                .map(post -> this.modelMapper.map(post, PostMapper.class)).collect(Collectors.toList());
         return postMappers;
     }
 

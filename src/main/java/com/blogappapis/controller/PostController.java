@@ -2,6 +2,7 @@ package com.blogappapis.controller;
 
 import com.blogappapis.mapper.ApiResponse;
 import com.blogappapis.mapper.PostMapper;
+import com.blogappapis.mapper.PostResponse;
 import com.blogappapis.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,9 +39,12 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<List<PostMapper>> getAllPost(){
-        List<PostMapper> allPost = this.postService.getAllPost();
-        return new ResponseEntity<List<PostMapper>>(allPost, HttpStatus.OK);
+    public ResponseEntity<PostResponse> getAllPost(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize
+    ){
+        PostResponse allPost = this.postService.getAllPost(pageNumber,pageSize);
+        return new ResponseEntity<PostResponse>(allPost, HttpStatus.OK);
     }
 
 

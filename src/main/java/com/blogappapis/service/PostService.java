@@ -2,6 +2,7 @@ package com.blogappapis.service;
 
 import com.blogappapis.entity.Post;
 import com.blogappapis.mapper.PostMapper;
+import com.blogappapis.mapper.PostResponse;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface PostService {
 
     void deletePost(Integer postId);
 
-    List<PostMapper> getAllPost();
+    PostResponse getAllPost(Integer pageNumber, Integer pageSize);
 
     PostMapper getPostById(Integer postId);
 
