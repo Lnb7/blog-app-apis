@@ -22,5 +22,5 @@ public interface PostService {
 
     List<PostMapper> getPostByUser(Integer userId);
 
-    List<Post> searchPost(String keyword);
+    List<PostMapper> searchPost(String keyword);
 }

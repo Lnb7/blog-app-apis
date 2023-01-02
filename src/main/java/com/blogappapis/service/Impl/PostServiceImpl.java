@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -129,7 +130,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> searchPost(String keyword) {
-        return null;
+    public List<PostMapper> searchPost(String keyword) {
+        List<Post> postList = this.postRepository.findByTitle("%" + keyword + "%");
+        List<PostMapper> mapperStream = postList.stream()
+                .map(post -> this.modelMapper.map(postList, PostMapper.class)).collect(Collectors.toList());
+        return mapperStream;
     }
 }
